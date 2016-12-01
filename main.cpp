@@ -5,15 +5,23 @@
 
 #include <iostream>
 #include <vector>
+#include <cstring>
+
+#include "media.h"
+#include "music.h"
+#include "movie.h"
+#include "videogame.h"
 
 using namespace std;
 
-enum Command {ADD, SEARCH, DELETE}
-enum Type {MUSIC, MOVIE, VIDEOGAME}
+enum Command {ADD, SEARCH, DELETE, QUIT};
+enum Type {MUSIC, MOVIE, VIDEOGAME};
 
 //Functions
 Command getCommand();
 Type getTypeRequest();
+void searchm(vector<Media*>*);
+void deletem(vector<Media*>*);
 void addm(vector<Media*>*);
 void addmusic(vector<Media*>*);
 void addmovie(vector<Media*>*);
@@ -27,25 +35,28 @@ int main() {
 	while (!done) {
 		switch (getCommand()) {
 		case ADD: addm(inventory);
-			  break;
-		case SEARCH: searchm();
-			  break;
-		case DELETE: deletem();
+			break;
+		case SEARCH: searchm(inventory);
+			break;
+		case DELETE: deletem(inventory);
+			break;
+		case QUIT: done = true;
 		}
 	}
 }
 
-
+//Get some input and return codes
 Command getCommand() {
-	char* input = new char[80];
+	char input[80];
 	
-	const char*[3] commands = {"ADD", "SEARCH", "DELETE"};
+	const char* commands[4] = {"ADD", "SEARCH", "DELETE", "QUIT"};
 
-	cout << "Enter command: ";
+	cout << "Enter command (ADD, SEARCH, DELETE, QUIT): ";
 	cin >> input;
 
-	for (int i = 0; i < 3; i++) {
-		if (strcmp(commands[i], input)
+	int i;
+	for (i = 0; i < 4; i++) {
+		if (strcmp(commands[i], input) == 0)
 			break;
 	}
 
@@ -54,29 +65,117 @@ Command getCommand() {
 
 
 Type getTypeRequest() {
-	char* input = new char[80];
+	char input[80];
 	
-	const char*[3] types = {"MUSIC", "MOVIE", "VIDEOGAME"};
+	const char* types[3] = {"MUSIC", "MOVIE", "VIDEOGAME"};
 
-	cout << "Enter type: ";
+	cout << "Enter media type (MUSIC, MOVIE, VIDEOGAME): ";
 	cin >> input;
 
-	for (int i = 0; i < 3; i++) {
-		if (strcmp(types[i], input)
+	int i;
+	for (i = 0; i < 3; i++) {
+		if (strcmp(types[i], input) == 0)
 			break;
 	}
 
-	return static_casti;
+	return static_cast<Type>(i);
 }
 
 
+//Search functions
+void searchm(vector<Media*>* inven) {
+	int searchchoice;
+	char title[80];
+	int year;
+	char* info;
+
+	cout << "Search by title(1) or year(2)?:";
+	cin >> searchchoice;
+
+	if (searchchoice == 1) {
+		cout << "Enter title:";
+		cin >> title;
+		for (int i = 0; i < inven->size(); i++) {
+			if (strcmp(inven->at(i)->getTitle(), title) == 0) {
+				info = inven->at(i)->getInfo();
+				cout << info << endl;
+				delete[] info;
+			}
+		}
+	}
+
+	if (searchchoice == 2) {
+		cout << "Enter year:";
+		cin >> year;
+		for (int i = 0; i < inven->size(); i++) {
+			if (inven->at(i)->getYear() == year)
+				info = inven->at(i)->getInfo();
+				cout << info << endl;
+				delete[] info;
+		}
+	}
+}
+
+//Delete functions
+void deletem(vector<Media*>* inven) {
+	int searchchoice;
+	char title[80];
+	int year;
+	char confirm;
+	char* info;
+
+	cout << "Search by title(1) or year(2)?:";
+	cin >> searchchoice;
+
+	if (searchchoice == 1) {
+		cout << "Enter title:";
+		cin >> title;
+		for (int i = 0; i < inven->size(); i++) {
+			if (strcmp(inven->at(i)->getTitle(), title) == 0) {
+				info = inven->at(i)->getInfo();
+				cout << info << endl;
+				delete[] info;
+				cout << "Delete? (y/n):";
+				cin >> confirm;
+				if (confirm == 'y') {
+					delete inven->at(i);
+					inven->erase(inven->begin()+i);
+					cout << "Deleted" << endl;
+				}
+			}
+		}
+	}
+
+	if (searchchoice == 2) {
+		cout << "Enter year:";
+		cin >> year;
+		for (int i = 0; i < inven->size(); i++) {
+			if (inven->at(i)->getYear() == year) {
+				info = inven->at(i)->getInfo();
+				cout << info << endl;
+				delete[] info;
+				cout << "Delete? (y/n):";
+				cin >> confirm;
+				if (confirm == 'y') {
+					delete inven->at(i);
+					inven->erase(inven->begin()+i);
+					cout << "Deleted" << endl;
+				}
+			}
+		}
+	}
+}
+
+
+
+//Media addition functions
 void addm(vector<Media*>* inven) {
 	switch(getTypeRequest()) {
-	case MUSIC: addmusic();
+	case MUSIC: addmusic(inven);
        		break;
-	case MOVIE: addmovie();
+	case MOVIE: addmovie(inven);
 		break;
-	case VIDEOGAME: addvideogame();
+	case VIDEOGAME: addvideogame(inven);
 		break;	
 	}
 }
@@ -88,16 +187,47 @@ void addmusic(vector<Media*>* inven) {
 	cout << "Enter title:";
 	cin >> title;
 	cout << "Enter year:";
-
-	cout << "Enter artist";
-	cout << "Enter publisher";
+	cin >> year;
+	cout << "Enter artist:";
+	cin >> artist;
+	cout << "Enter publisher:";
+	cin >> publisher;
 	cout << "Enter duration";
+	cin >> duration;
+
+	inven->push_back(new Music(title, year, artist, publisher, duration));
 }
 
 void addmovie(vector<Media*>* inven) {
-	
+	char title[80], director[80];
+	int year, duration, rating;
+
+	cout << "Enter title:";
+	cin >> title;
+	cout << "Enter year:";
+	cin >> year;
+	cout << "Enter director:";
+	cin >> director;
+	cout << "Enter duration:";
+	cin >> duration;
+	cout << "Enter rating";
+	cin >> rating;
+
+	inven->push_back(new Movie(title, year, director, duration, rating));
 }
 
-void videogame() {
-	
+void addvideogame(vector<Media*>* inven) {
+	char title[80], publisher[80];
+	int year, rating;
+
+	cout << "Enter title:";
+	cin >> title;
+	cout << "Enter year:";
+	cin >> year;
+	cout << "Enter publisher:";
+	cin >> publisher;
+	cout << "Enter rating";
+	cin >> rating;
+
+	inven->push_back(new Videogame(title, year, publisher, rating));
 }
