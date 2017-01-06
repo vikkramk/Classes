@@ -52,7 +52,7 @@ Command getCommand() {
 	const char* commands[4] = {"ADD", "SEARCH", "DELETE", "QUIT"};
 
 	cout << "Enter command (ADD, SEARCH, DELETE, QUIT): ";
-	cin >> input;
+	cin.getline(input, 80);
 
 	int i;
 	for (i = 0; i < 4; i++) {
@@ -70,7 +70,7 @@ Type getTypeRequest() {
 	const char* types[3] = {"MUSIC", "MOVIE", "VIDEOGAME"};
 
 	cout << "Enter media type (MUSIC, MOVIE, VIDEOGAME): ";
-	cin >> input;
+	cin.getline(input, 80);
 
 	int i;
 	for (i = 0; i < 3; i++) {
@@ -91,10 +91,11 @@ void searchm(vector<Media*>* inven) {
 
 	cout << "Search by title(1) or year(2)?:";
 	cin >> searchchoice;
+	cin.ignore();
 
 	if (searchchoice == 1) {
 		cout << "Enter title:";
-		cin >> title;
+		cin.getline(title, 80);
 		for (int i = 0; i < inven->size(); i++) {
 			if (strcmp(inven->at(i)->getTitle(), title) == 0) {
 				info = inven->at(i)->getInfo();
@@ -107,6 +108,7 @@ void searchm(vector<Media*>* inven) {
 	if (searchchoice == 2) {
 		cout << "Enter year:";
 		cin >> year;
+		cin.ignore();
 		for (int i = 0; i < inven->size(); i++) {
 			if (inven->at(i)->getYear() == year)
 				info = inven->at(i)->getInfo();
@@ -126,10 +128,11 @@ void deletem(vector<Media*>* inven) {
 
 	cout << "Search by title(1) or year(2)?:";
 	cin >> searchchoice;
+	cin.ignore();
 
 	if (searchchoice == 1) {
 		cout << "Enter title:";
-		cin >> title;
+		cin.getline(title, 80);
 		for (int i = 0; i < inven->size(); i++) {
 			if (strcmp(inven->at(i)->getTitle(), title) == 0) {
 				info = inven->at(i)->getInfo();
@@ -137,6 +140,7 @@ void deletem(vector<Media*>* inven) {
 				delete[] info;
 				cout << "Delete? (y/n):";
 				cin >> confirm;
+				cin.ignore();
 				if (confirm == 'y') {
 					delete inven->at(i);
 					inven->erase(inven->begin()+i);
@@ -149,6 +153,7 @@ void deletem(vector<Media*>* inven) {
 	if (searchchoice == 2) {
 		cout << "Enter year:";
 		cin >> year;
+		cin.ignore();
 		for (int i = 0; i < inven->size(); i++) {
 			if (inven->at(i)->getYear() == year) {
 				info = inven->at(i)->getInfo();
@@ -156,6 +161,7 @@ void deletem(vector<Media*>* inven) {
 				delete[] info;
 				cout << "Delete? (y/n):";
 				cin >> confirm;
+				cin.ignore();
 				if (confirm == 'y') {
 					delete inven->at(i);
 					inven->erase(inven->begin()+i);
@@ -185,15 +191,17 @@ void addmusic(vector<Media*>* inven) {
 	int year, duration;
 
 	cout << "Enter title:";
-	cin >> title;
+	cin.getline(title, 80);
 	cout << "Enter year:";
 	cin >> year;
+	cin.ignore();
 	cout << "Enter artist:";
-	cin >> artist;
+	cin.getline(artist, 80);
 	cout << "Enter publisher:";
-	cin >> publisher;
+	cin.getline(publisher, 80);
 	cout << "Enter duration";
 	cin >> duration;
+	cin.ignore();
 
 	inven->push_back(new Music(title, year, artist, publisher, duration));
 }
@@ -203,15 +211,18 @@ void addmovie(vector<Media*>* inven) {
 	int year, duration, rating;
 
 	cout << "Enter title:";
-	cin >> title;
+	cin.getline(title, 80);
 	cout << "Enter year:";
 	cin >> year;
+	cin.ignore();
 	cout << "Enter director:";
-	cin >> director;
+	cin.getline(director, 80);
 	cout << "Enter duration:";
 	cin >> duration;
+	cin.ignore();
 	cout << "Enter rating";
 	cin >> rating;
+	cin.ignore();
 
 	inven->push_back(new Movie(title, year, director, duration, rating));
 }
@@ -221,13 +232,15 @@ void addvideogame(vector<Media*>* inven) {
 	int year, rating;
 
 	cout << "Enter title:";
-	cin >> title;
+	cin.getline(title, 80);
 	cout << "Enter year:";
 	cin >> year;
+	cin.ignore();
 	cout << "Enter publisher:";
-	cin >> publisher;
+	cin.getline(publisher, 80);
 	cout << "Enter rating";
 	cin >> rating;
+	cin.ignore();
 
 	inven->push_back(new Videogame(title, year, publisher, rating));
 }
